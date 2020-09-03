@@ -5,6 +5,7 @@ What is the largest prime factor of the number 600851475143?
 """
 
 import math
+import numpy as np
 
 
 def largest_prime_factor_naive(number):
@@ -83,8 +84,38 @@ def largest_prime_factor_square_optimized(number):
     return factors
 
 
+def idx_sieve(length):
+    """Static length sieve-based prime generator"""
+    primes = []
+    is_prime = np.array([True]*length)
+    i = 2
+    while i < length:
+        if is_prime[i]:
+            is_prime[np.arange(i, length, i)] = False
+            primes.append(i)
+        else:
+            i += 1
+    return primes
+
+
+def prime_factor(n, primes):
+    i = 0
+    factors = []
+    while n != 1:
+        while (n % primes[i]) != 0:
+            i += 1
+        factors.append(primes[i])
+        n = n / primes[i]
+    return factors
+
+
 if __name__ == '__main__':
     number = 600851475143
     print(largest_prime_factor_naive(number))
     print(largest_prime_factor_even_optimized(number))
     print(largest_prime_factor_square_optimized(number))
+
+    number = 600851475143
+    primes = idx_sieve(20000)
+    
+    print(max(prime_factor(number, primes)))
